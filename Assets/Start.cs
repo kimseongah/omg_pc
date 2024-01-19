@@ -3,9 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Start : MonoBehaviour
+public class SceneChange : MonoBehaviour
 {
-    public void StartScene()
+    public void ReadyScene()
+    {
+        SceneManager.LoadScene("ReadyScene");
+    }
+
+    public void GameScene()
     {
         SceneManager.LoadScene("edited");
     }
