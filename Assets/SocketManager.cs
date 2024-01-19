@@ -5,11 +5,12 @@ using UnityEngine;
 
 public class SocketManager : MonoBehaviour
 {
+    public ServerConfig serverConfig;
     public SocketIOUnity socket;
 
     void Start()
     {
-        var uri = new Uri("http://172.10.5.176");
+        var uri = new Uri(serverConfig.baseUrl);
         socket = new SocketIOUnity(uri, new SocketIOOptions
         {
             Transport = SocketIOClient.Transport.TransportProtocol.WebSocket
