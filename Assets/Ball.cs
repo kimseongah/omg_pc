@@ -58,7 +58,7 @@ public class Ball : MonoBehaviour
         // target이 bot인 경우
         else if (target == bot)
         {
-            transform.position = new Vector3(0.753f, 1.604f, 3.76f); // bot의 경우 지정된 위치로 설정
+            transform.position = new Vector3(0.753f, 1.604f, 6.9f); // bot의 경우 지정된 위치로 설정
         }
         
         isFirstCollision = true;
