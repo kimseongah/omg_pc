@@ -6,6 +6,12 @@ TagManager:
   tags:
   - Ball
   - Wall
+  - Ground
+  - PlayerInArea
+  - BotInArea
+  - OutArea
+  - PlayerOutArea
+  - BotOutArea
   layers:
   - Default
   - TransparentFX

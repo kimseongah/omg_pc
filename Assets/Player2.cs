@@ -1,8 +1,8 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player2 : MonoBehaviour
 {
     public Transform aimTarget; // the target where we aim to land the shuttlecock
     float speed = 3f; // move speed
@@ -24,8 +24,8 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        float h = Input.GetAxisRaw("Horizontal"); // get the horizontal axis of the keyboard
-        float v = Input.GetAxisRaw("Vertical"); // get the vertical axis of the keyboard
+        float h = Input.GetAxisRaw("Horizontal2"); // get the horizontal axis of the keyboard
+        float v = Input.GetAxisRaw("Vertical2"); // get the vertical axis of the keyboard
 
         if (Input.GetKeyDown(KeyCode.F)) 
         {
