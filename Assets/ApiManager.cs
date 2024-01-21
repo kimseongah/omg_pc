@@ -9,10 +9,12 @@ public class ApiManager : MonoBehaviour
 {
     public ServerConfig serverConfig;
     public TextMeshProUGUI code;
+    GameObject obj;
 
     void Start()
     {
         getCode();
+        obj = GameObject.Find("Camera");
     }
 
     void getCode()
@@ -30,7 +32,9 @@ public class ApiManager : MonoBehaviour
 
         if (www.error == null)
         {
-            code.text = www.downloadHandler.text;
+            const string prefix = "Code: ";
+            code.text = prefix + www.downloadHandler.text;
+            obj.GetComponent<SocketManager>().OnReady(code.text.Split(prefix)[1]);
         }
         else
         {
