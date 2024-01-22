@@ -97,7 +97,13 @@ public class Player : MonoBehaviour
 
         position.y = 0; // Y축 값은 무시
 
-        position.z += 3;
+        string objectName = gameObject.name;
+        if (objectName == "player"){
+            position.z += 3;
+        } else {
+            position.z -= 6;
+        }
+        
         return position;
     }
 

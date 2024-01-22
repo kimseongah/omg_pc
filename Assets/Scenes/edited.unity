@@ -786,20 +786,6 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 497655333}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &176485621
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 176485620}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d61fb0b27e804493d9155de6f83bc713, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  aimTarget: {fileID: 1308338365}
-  shuttlecock: {fileID: 1432703116}
 --- !u!114 &176485622
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -858,14 +844,31 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 4.9205103, y: 5.6730943, z: 1.4123607}
-  m_Center: {x: 0, y: 1.8365457, z: 1.4108717}
+  m_Size: {x: 4.9205103, y: 5.6730943, z: 1.3660288}
+  m_Center: {x: 0, y: 1.8365457, z: 0.067248344}
 --- !u!4 &176485628 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5697985877615780038, guid: a1133ace6b23eb74aa6296fa0bd0706d,
     type: 3}
   m_PrefabInstance: {fileID: 497655333}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &176485632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 176485620}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d5d47d1fce926646afaea65538be173, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  aimTarget: {fileID: 1308338365}
+  shuttlecock: {fileID: 1432703116}
+  playerInArea: {fileID: 47234994}
+  minDistanceToHit: 0
+  predictionTime: 2
 --- !u!1001 &191849242
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2098,7 +2101,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5697985877615780034, guid: a1133ace6b23eb74aa6296fa0bd0706d,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 176485621}
+      addedObject: {fileID: 176485632}
   m_SourcePrefab: {fileID: 100100000, guid: a1133ace6b23eb74aa6296fa0bd0706d, type: 3}
 --- !u!1 &534669902
 GameObject:
@@ -8096,6 +8099,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   aimTarget: {fileID: 809386384}
   shuttlecock: {fileID: 1432703116}
+  playerInArea: {fileID: 0}
+  minDistanceToHit: 0
+  predictionTime: 2
 --- !u!4 &5786575032299984392
 Transform:
   m_ObjectHideFlags: 0
