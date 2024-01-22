@@ -16,10 +16,14 @@ public class Player : MonoBehaviour
     // 예상 위치에 도달할 시간 (초)
     public float predictionTime = 2f;
 
+    bool isNearBy = false;
+    string objectName;
+
     private void Start()
     {
         animator = GetComponent<Animator>();
         aimTargetInitialPosition = aimTarget.position;
+        objectName = gameObject.name;
     }
 
     void Update()
@@ -54,6 +58,19 @@ public class Player : MonoBehaviour
         {
             aimTarget.Translate(Vector3.right * speed * 2 * Time.deltaTime);
         }
+
+        if (objectName == "player"){
+            if (Input.GetKeyDown(KeyCode.Return) && isNearBy) // 스페이스바를 눌렀을 때
+            {
+                HitShuttlecock();
+            }
+        } else {
+            if (Input.GetKeyDown(KeyCode.Space) && isNearBy) // 스페이스바를 눌렀을 때
+            {
+                HitShuttlecock();
+            }
+        }
+        
     }
 
     bool IsShuttlecockInPlayerArea()
@@ -97,7 +114,6 @@ public class Player : MonoBehaviour
 
         position.y = 0; // Y축 값은 무시
 
-        string objectName = gameObject.name;
         if (objectName == "player"){
             position.z += 3;
         } else {
@@ -132,22 +148,34 @@ public class Player : MonoBehaviour
     {
         if (other.CompareTag("Ball")) // if we collide with the shuttlecock 
         {
-            Vector3 dir = aimTarget.position - transform.position; // get the direction to where we want to send the shuttlecock
-            Vector3 force = dir.normalized * hitForce + Vector3.up * upForce; // adding upward force for a parabolic trajectory
-
-            other.GetComponent<Rigidbody>().velocity = force;
-
-            Vector3 shuttlecockDir = shuttlecock.position - transform.position;
-            if (shuttlecockDir.x >= 0)                                   
-            {
-                animator.Play("forehand");                        
-            }
-            else                                                  
-            {
-                animator.Play("backhand");
-            }
-
-            aimTarget.position = aimTargetInitialPosition; // reset the position of the aiming gameObject to its original position
+            isNearBy = true;
         }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Ball")) // Ball 태그를 가진 오브젝트와 떨어졌을 때
+        {
+            isNearBy = false;
+        }
+    }
+
+    private void HitShuttlecock()
+    {
+        Vector3 dir = aimTarget.position - transform.position; // get the direction to where we want to send the shuttlecock
+        Vector3 force = dir.normalized * hitForce + Vector3.up * upForce; // adding upward force for a parabolic trajectory
+
+        shuttlecock.GetComponent<Rigidbody>().velocity = force;
+
+        Vector3 shuttlecockDir = shuttlecock.position - transform.position;
+        if (shuttlecockDir.x >= 0)
+        {
+            animator.Play("forehand");
+        }
+        else
+        {
+            animator.Play("backhand");
+        }
+
+        aimTarget.position = aimTargetInitialPosition; // reset the position of the aiming gameObject to its original position
     }
 }
