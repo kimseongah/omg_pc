@@ -4046,8 +4046,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 4.9205103, y: 5.6730943, z: 1.4123607}
-  m_Center: {x: 0, y: 1.8365457, z: 1.4108717}
+  m_Size: {x: 4.9205103, y: 3.4794567, z: 2.1484184}
+  m_Center: {x: 0, y: 0.7397257, z: 0.045309067}
 --- !u!95 &978640874
 Animator:
   serializedVersion: 5
@@ -4101,6 +4101,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   aimTarget: {fileID: 809386384}
   shuttlecock: {fileID: 1432703116}
+  playerInArea: {fileID: 1375461943}
+  minDistanceToHit: 0.2
+  predictionTime: 2
 --- !u!4 &978640881 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5697985877615780038, guid: a1133ace6b23eb74aa6296fa0bd0706d,
@@ -5289,8 +5292,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.57078564, y: 1, z: 1.0385121}
-  m_Center: {x: 0.318791, y: 0, z: -0.002624667}
+  m_Size: {x: 0.5733231, y: 1.2309461, z: 1.0385121}
+  m_Center: {x: 0.32005978, y: 0.115471296, z: -0.0026246668}
 --- !u!1 &1428822889
 GameObject:
   m_ObjectHideFlags: 0
@@ -5427,7 +5430,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: d16d5c28a877045cc8a8e2060d550742,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.604
+      value: 1.364
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d16d5c28a877045cc8a8e2060d550742,
         type: 3}
@@ -5680,8 +5683,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Radius: 6.217664
+  m_Center: {x: 0, y: 0, z: -5.7176647}
 --- !u!4 &1432703116 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: d16d5c28a877045cc8a8e2060d550742,
