@@ -14,7 +14,7 @@ public class ApiManager : MonoBehaviour
     void Start()
     {
         getCode();
-        obj = GameObject.Find("Camera");
+        obj = GameObject.Find("Socket");
     }
 
     void getCode()

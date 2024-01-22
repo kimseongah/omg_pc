@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using SocketIOClient;
 using UnityEngine;
@@ -18,6 +19,13 @@ class JoinData
     }
 }
 
+[Serializable]
+class SensorData
+{
+    public string name;
+    public double accX, accY, accZ, accT, gyrX, gyrY, gyrZ, gyrT;
+}
+
 public class SocketManager : MonoBehaviour
 {
     public ServerConfig serverConfig;
@@ -25,6 +33,22 @@ public class SocketManager : MonoBehaviour
     public TextMeshProUGUI player1, player2;
     short playerN = 0;
     JoinData[] player = new JoinData[2];
+    GameObject obj;
+
+    static SocketManager instance;
+
+    void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     void Start()
     {
@@ -34,16 +58,15 @@ public class SocketManager : MonoBehaviour
             Transport = SocketIOClient.Transport.TransportProtocol.WebSocket
         });
 
-
         socket.Connect();
-
 
         socket.OnConnected += (sender, e) =>
         {
             Debug.Log("Connected");
         };
         socket.OnDisconnected += (sender, e) => { Debug.Log("Disconnected: " + e); };
-        
+
+        obj = GameObject.Find("Game Start");
     }
 
     public void OnReady(string code)
@@ -72,6 +95,7 @@ public class SocketManager : MonoBehaviour
                         player2.text = data.name;
                     }
                     playerN++;
+                    StartCoroutine(StartIf2(code));
                 }
             }
             else if (data.statusCode == 200)
@@ -92,8 +116,26 @@ public class SocketManager : MonoBehaviour
         });
     }
 
+    IEnumerator StartIf2(string code)
+    {
+        yield return new WaitForSeconds(5.0f);
+        socket.OnUnityThread("game " + code, (response) =>
+        {
+            SensorData data = JsonUtility.FromJson<SensorData>(response.ToString().Trim('[', ']'));
+            if (player[0].name == data.name)
+            {
+                /* TODO */
+            } else if (player[1].name == data.name)
+            {
+                /* TODO */
+            }
+        });
+        socket.Emit("start", code);
+        obj.GetComponent<SceneChange>().GameScene();
+    }
 
-    private void OnDestroy()
+
+    public void Disconnect()
     {
         socket.Disconnect();
     }
