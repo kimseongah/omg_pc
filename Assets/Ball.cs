@@ -17,11 +17,7 @@ public class Ball : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        // if (collision.transform.CompareTag("Wall")) // if the ball hits a wall
-        // {
-        //     GetComponent<Rigidbody>().velocity = Vector3.zero; // reset it's velocity to 0 so it doesn't move anymore
-        //     transform.position = initialPos; // reset it's position 
-        // }
+        Debug.Log(isFirstCollision);
         if (!isFirstCollision) // 첫 충돌이 아니면 로직 수행
         {
             if (collision.gameObject.CompareTag("PlayerInArea"))
@@ -35,14 +31,23 @@ public class Ball : MonoBehaviour
             } else if (collision.gameObject.CompareTag("PlayerOutArea"))
             {
                 SendShuttlecockTo(player);
-            } else if (collision.gameObject.CompareTag("BotOutArea"))
+            } 
+            else if (collision.gameObject.CompareTag("BotOutArea"))
             {
                 SendShuttlecockTo(bot);
+            }
+
+            if (collision.gameObject.CompareTag("Player") && collision.gameObject.transform == player)
+            {
+                Rigidbody rb = GetComponent<Rigidbody>();
+                rb.velocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
             }
         } else {
             isFirstCollision = false;
         }
 
+        
     }
 
     void SendShuttlecockTo(Transform target)
@@ -54,16 +59,14 @@ public class Ball : MonoBehaviour
         // target이 player인 경우
         if (target == player)
         {
-            transform.position = new Vector3(0.61f, 1.364f, -11.87f); // player의 경우 초기 위치로 설정
+            transform.position = new Vector3(0.61f, 1.664f, -9.87f); // player의 경우 초기 위치로 설정
         }
         // target이 bot인 경우
         else if (target == bot)
         {
-            transform.position = new Vector3(0.753f, 1.364f, 6.9f); // bot의 경우 지정된 위치로 설정
+            transform.position = new Vector3(0.753f, 1.664f, 7.25f); // bot의 경우 지정된 위치로 설정
         }
 
         isFirstCollision = true;
     }
-
-
 }
