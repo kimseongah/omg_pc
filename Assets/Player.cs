@@ -20,7 +20,7 @@ public class Player : MonoBehaviour
     string objectName;
 
     private void Start()
-    {
+    {   
         animator = GetComponent<Animator>();
         aimTargetInitialPosition = aimTarget.position;
         objectName = gameObject.name;
@@ -32,7 +32,8 @@ public class Player : MonoBehaviour
         // 셔틀콕이 움직이지 않을 때, 셔틀콕의 현재 위치로 이동
         if (shuttlecockRb.velocity.magnitude <= 0.001f)
         {
-            if(IsShuttlecockInPlayerArea()){
+            if(IsShuttlecockInPlayerArea())
+            {
                 MoveTowardsShuttlecock(shuttlecock.position);
             }
         }
@@ -82,7 +83,6 @@ public class Player : MonoBehaviour
         // PlayerArea의 x와 z 축 범위 내에 있는지 확인
         bool isInXBounds = shuttlecockPos.x >= playerAreaBounds.min.x && shuttlecockPos.x <= playerAreaBounds.max.x;
         bool isInZBounds = shuttlecockPos.z >= playerAreaBounds.min.z && shuttlecockPos.z <= playerAreaBounds.max.z;
-
         return isInXBounds && isInZBounds;
     }
 
@@ -135,14 +135,35 @@ public class Player : MonoBehaviour
         }
     }
 
-    void MoveTowardsShuttlecock(Vector3 shuttlecockPosition)
+
+    Vector3 lastDirection;
+    private void MoveTowardsShuttlecock(Vector3 shuttlecockPosition)
     {
         Vector3 direction = shuttlecockPosition - transform.position;
-        if (direction.magnitude > minDistanceToHit)
-        {
-            transform.Translate(direction.normalized * speed * Time.deltaTime, Space.World);
+        direction.y = 0; // Y축 이동 제외
+
+        if (objectName == "player"){
+            if (direction.magnitude > minDistanceToHit || transform.position.z > (shuttlecockPosition.z - 2))
+            {
+                transform.Translate(direction.normalized * speed * Time.deltaTime, Space.World);
+            }
         }
+        else
+        {
+            // direction.magnitude가 minDistanceToHit보다 크거나, transform.position.z가 (shuttlecockPosition.z + 4)보다 작을 때
+            if (direction.magnitude > minDistanceToHit || transform.position.z < (shuttlecockPosition.z + 2))
+            {
+                lastDirection = direction.normalized; // 마지막 방향 업데이트
+                transform.Translate(lastDirection * speed * Time.deltaTime, Space.World);                                                         
+            }
+            else if (direction.magnitude < minDistanceToHit) // 조건이 참이 아니면 마지막 방향으로 계속 이동
+            {
+                Debug.Log(lastDirection);
+                transform.Translate(lastDirection * speed * Time.deltaTime, Space.World);
+            }
+        }        
     }
+
 
     private void OnTriggerEnter(Collider other)
     {
@@ -161,11 +182,14 @@ public class Player : MonoBehaviour
 
     private void HitShuttlecock()
     {
-        Vector3 dir = aimTarget.position - transform.position; // get the direction to where we want to send the shuttlecock
-        Vector3 force = dir.normalized * hitForce + Vector3.up * upForce; // adding upward force for a parabolic trajectory
+        // 라켓의 회전을 기반으로 힘의 방향 계산
+        Vector3 forwardDirection = transform.forward;
+        Vector3 hitDirection = forwardDirection.normalized * hitForce + Vector3.up * upForce;
 
-        shuttlecock.GetComponent<Rigidbody>().velocity = force;
+        // 셔틀콕에 힘 적용
+        shuttlecock.GetComponent<Rigidbody>().velocity = hitDirection;
 
+        // 애니메이션 재생
         Vector3 shuttlecockDir = shuttlecock.position - transform.position;
         if (shuttlecockDir.x >= 0)
         {
@@ -176,6 +200,7 @@ public class Player : MonoBehaviour
             animator.Play("backhand");
         }
 
-        aimTarget.position = aimTargetInitialPosition; // reset the position of the aiming gameObject to its original position
+        aimTarget.position = aimTargetInitialPosition; // aimTarget 위치 초기화
     }
+
 }
