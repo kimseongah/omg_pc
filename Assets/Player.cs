@@ -14,6 +14,11 @@ public class Player : MonoBehaviour
     public GameObject playerInArea;
     public float minDistanceToHit = 0f;
 
+    Vector3 origin = new Vector3(1.28f, 0.3825f, 0.67f);
+    const float r = 0.8f;
+    private float lowPassFilterFactor = 0.1f;
+    private Vector3 lowPassValue = Vector3.zero;
+
     // 예상 위치에 도달할 시간 (초)
     public float predictionTime = 2f;
 
