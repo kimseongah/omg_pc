@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 public class Player : MonoBehaviour
 {
     public Transform aimTarget;
     float speed = 3f;
-    float hitForce = 15f;
-    float upForce = 10f;
+    float hitForce = 9f;
+    float upForce = 9f;
     bool isHitting;
     public Transform shuttlecock;
     Animator animator;
@@ -18,75 +19,123 @@ public class Player : MonoBehaviour
 
     bool isNearBy = false;
     string objectName;
-
+    public Transform racquet;
+    public float smoothMoveSpeed = 5f; 
+    public Collider targetArea;
     private void Start()
     {   
         animator = GetComponent<Animator>();
         aimTargetInitialPosition = aimTarget.position;
         objectName = gameObject.name;
+        if (racquet == null)
+        {
+            racquet = transform.Find("racquet");
+        }
+        if (objectName == "player")
+        {
+            transform.position = new Vector3(0.176f, 1.62f, -10.22f);
+        }
+        // target이 bot인 경우
+        else if (objectName == "player2")
+        {
+            transform.position = new Vector3(0.904f, 1.62f, 7.45f);
+        }
     }
 
     void Update()
     {
         Rigidbody shuttlecockRb = shuttlecock.GetComponent<Rigidbody>();
-        // 셔틀콕이 움직이지 않을 때, 셔틀콕의 현재 위치로 이동
-        if (shuttlecockRb.velocity.magnitude <= 0.001f)
-        {
-            if(IsShuttlecockInPlayerArea())
-            {
-                MoveTowardsShuttlecock(shuttlecock.position);
-            }
-        }
-        else
-        {
-            if (IsShuttlecockApproaching(shuttlecockRb))
-            {
-                Vector3 predictedPosition = PredictShuttlecockLanding();
-                MoveTowardsPredictedPosition(predictedPosition);
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            isHitting = true;
-        }
-        else if (Input.GetKeyUp(KeyCode.F))
-        {
-            isHitting = false;
-        }
-
-        if (isHitting)
-        {
-            aimTarget.Translate(Vector3.right * speed * 2 * Time.deltaTime);
-        }
+        Ball shuttlecockScript = shuttlecock.GetComponent<Ball>();
+        // 서브일 때 포물선으로 올려주기
+        // 나한테 다가올 때
+            //y==racquet.y일 때 t구하고 위치 예측해서
 
         if (objectName == "player"){
-            if (Input.GetKeyDown(KeyCode.Return) && isNearBy) // 스페이스바를 눌렀을 때
+            if (Input.GetKeyDown(KeyCode.Return) && isNearBy) // 엔터를 눌렀을 때
             {
                 HitShuttlecock();
+                PlayerPrefs.SetInt("whoIsHitting", 1);
+                PlayerPrefs.Save();
             }
         } else {
             if (Input.GetKeyDown(KeyCode.Space) && isNearBy) // 스페이스바를 눌렀을 때
             {
                 HitShuttlecock();
+                PlayerPrefs.SetInt("whoIsHitting", 2);
+                PlayerPrefs.Save();
             }
+        }
+        int whoIsHitting = PlayerPrefs.GetInt("whoIsHitting", 0);
+        
+        if(whoIsHitting == 1 && objectName == "player2")
+        {
+            Vector3 predictedPosition = CalculateLandingPosition(shuttlecockRb.position, shuttlecockRb.velocity, racquet.position.y);
+            predictedPosition.x += 0.8f;
+            predictedPosition.z -= 1;
+            StartCoroutine(MoveToPosition(predictedPosition));
+            PlayerPrefs.SetInt("whoIsHitting", 0);
+            PlayerPrefs.Save();
+        } 
+        else if(whoIsHitting == 2 && objectName == "player")
+        {
+            Vector3 predictedPosition = CalculateLandingPosition(shuttlecockRb.position, shuttlecockRb.velocity, racquet.position.y);
+            predictedPosition.x -= 0.8f;
+            predictedPosition.z += 1;
+            StartCoroutine(MoveToPosition(predictedPosition));
+            PlayerPrefs.SetInt("whoIsHitting", 0);
+            PlayerPrefs.Save();
         }
         
     }
 
-    bool IsShuttlecockInPlayerArea()
+    // 셔틀콕의 초기 위치, 초기 속도, 목표 y 위치(라켓의 y 위치)를 받아서 x, z 위치를 반환
+    public Vector3 CalculateLandingPosition(Vector3 initialPosition, Vector3 initialVelocity, float targetYPosition)
     {
-        BoxCollider playerAreaCollider = playerInArea.GetComponent<BoxCollider>();
-        Bounds playerAreaBounds = playerAreaCollider.bounds;
-        Vector3 shuttlecockPos = shuttlecock.position;
+        float gravity = Physics.gravity.y;
 
-        // PlayerArea의 x와 z 축 범위 내에 있는지 확인
-        bool isInXBounds = shuttlecockPos.x >= playerAreaBounds.min.x && shuttlecockPos.x <= playerAreaBounds.max.x;
-        bool isInZBounds = shuttlecockPos.z >= playerAreaBounds.min.z && shuttlecockPos.z <= playerAreaBounds.max.z;
-        return isInXBounds && isInZBounds;
+        Vector3 adjustedVelocity = initialVelocity;
+
+        Debug.Log("v: " + adjustedVelocity);
+
+        // 조정된 속도를 사용하여 시간 계산
+        float time;
+        if (Mathf.Approximately(adjustedVelocity.y, 0))
+        {
+            time = Mathf.Sqrt(2 * (targetYPosition - initialPosition.y) / -gravity);
+        }
+        else
+        {
+            float discriminant = adjustedVelocity.y * adjustedVelocity.y + 2 * gravity * (initialPosition.y - targetYPosition);
+            if (discriminant < 0)
+            {
+                Debug.LogError("The object does not reach the target Y position.");
+                return new Vector3(0, 1.62f, 0); 
+            }
+            time = (adjustedVelocity.y + Mathf.Sqrt(discriminant)) / (-gravity);
+        }
+
+        // 시간 t에서의 x, z 위치 계산
+        float x = initialPosition.x + adjustedVelocity.x * time;
+        float z = initialPosition.z + adjustedVelocity.z * time;
+        return new Vector3(x, targetYPosition, z);
     }
 
 
+
+    // 해당 위치로 이동
+    IEnumerator MoveToPosition(Vector3 position)
+    {
+        if (!Mathf.Approximately(position.y, 1.62f))
+        {
+            Debug.Log(position);
+            position.y = 1.62f;
+            while (Vector3.Distance(transform.position, position) > 0.01f) // 목표 위치에 가까워질 때까지 루프
+            {
+                transform.position = Vector3.Lerp(transform.position, position, smoothMoveSpeed * Time.deltaTime);
+                yield return null; // 다음 프레임까지 대기
+            }
+        }
+    }
 
     bool IsShuttlecockApproaching(Rigidbody shuttlecockRb)
     {
@@ -96,74 +145,6 @@ public class Player : MonoBehaviour
         // 셔틀콕이 플레이어 방향으로 움직이고 있는지 확인 (예: 90도 이내)
         return angle < 90.0f;
     }
-
-    Vector3 PredictShuttlecockLanding()
-    {
-        Rigidbody shuttlecockRb = shuttlecock.GetComponent<Rigidbody>();
-        Vector3 initialVelocity = shuttlecockRb.velocity;
-        float time = predictionTime;
-        Vector3 gravity = Physics.gravity * shuttlecockRb.mass;
-
-        // 중력의 영향을 고려한 위치 계산
-        Vector3 position = shuttlecock.position + initialVelocity * time + 0.5f * gravity * time * time;
-
-        // 드래그를 고려하여 속도 감소
-        float dragEffect = 1f / (1f + shuttlecockRb.drag * time);
-
-        position *= dragEffect;
-
-        position.y = 0; // Y축 값은 무시
-
-        if (objectName == "player"){
-            position.z += 3;
-        } else {
-            position.z -= 6;
-        }
-        
-        return position;
-    }
-
-    void MoveTowardsPredictedPosition(Vector3 predictedPosition)
-    {
-        Vector3 direction = predictedPosition - transform.position;
-        direction.y = 0; // Y축 이동 제외
-
-        // 셔틀콕에 충분히 가까워질 때까지 이동
-        if (direction.magnitude > minDistanceToHit)
-        {
-            transform.Translate(direction.normalized * speed * Time.deltaTime, Space.World);
-        }
-    }
-
-
-    Vector3 lastDirection;
-    private void MoveTowardsShuttlecock(Vector3 shuttlecockPosition)
-    {
-        Vector3 direction = shuttlecockPosition - transform.position;
-        direction.y = 0; // Y축 이동 제외
-
-        if (objectName == "player"){
-            if (direction.magnitude > minDistanceToHit || transform.position.z > (shuttlecockPosition.z - 2))
-            {
-                transform.Translate(direction.normalized * speed * Time.deltaTime, Space.World);
-            }
-        }
-        else
-        {
-            // direction.magnitude가 minDistanceToHit보다 크거나, transform.position.z가 (shuttlecockPosition.z + 4)보다 작을 때
-            if (direction.magnitude > minDistanceToHit || transform.position.z < (shuttlecockPosition.z + 2))
-            {
-                lastDirection = direction.normalized; // 마지막 방향 업데이트
-                transform.Translate(lastDirection * speed * Time.deltaTime, Space.World);                                                         
-            }
-            else if (direction.magnitude < minDistanceToHit) // 조건이 참이 아니면 마지막 방향으로 계속 이동
-            {
-                Debug.Log(lastDirection);
-                transform.Translate(lastDirection * speed * Time.deltaTime, Space.World);
-            }
-        }        
-    }
-
 
     private void OnTriggerEnter(Collider other)
     {
@@ -199,8 +180,7 @@ public class Player : MonoBehaviour
         {
             animator.Play("backhand");
         }
-
-        aimTarget.position = aimTargetInitialPosition; // aimTarget 위치 초기화
+        
     }
 
 }
