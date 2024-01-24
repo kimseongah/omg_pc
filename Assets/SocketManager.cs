@@ -20,10 +20,15 @@ class JoinData
 }
 
 [Serializable]
-class SensorData
+public class SensorData
 {
     public string name;
     public double accX, accY, accZ, accT, gyrX, gyrY, gyrZ, gyrT;
+
+    public Vector3 acc()
+    {
+        return new Vector3(-(float)accX, (float)accZ, (float)accY);
+    }
 }
 
 public class SocketManager : MonoBehaviour
@@ -33,9 +38,10 @@ public class SocketManager : MonoBehaviour
     public TextMeshProUGUI player1, player2;
     short playerN = 0;
     JoinData[] player = new JoinData[2];
+    public SensorData[] sensor = new SensorData[2];
     GameObject obj;
 
-    static SocketManager instance;
+    public static SocketManager instance;
 
     void Awake()
     {
@@ -124,10 +130,10 @@ public class SocketManager : MonoBehaviour
             SensorData data = JsonUtility.FromJson<SensorData>(response.ToString().Trim('[', ']'));
             if (player[0].name == data.name)
             {
-                /* TODO */
+                sensor[0] = data;
             } else if (player[1].name == data.name)
             {
-                /* TODO */
+                sensor[1] = data;
             }
         });
         socket.Emit("start", code);
