@@ -2026,11 +2026,11 @@ Transform:
   m_GameObject: {fileID: 534669902}
   serializedVersion: 2
   m_LocalRotation: {x: 0.12394452, y: -0, z: -0, w: 0.9922891}
-  m_LocalPosition: {x: 0.71, y: 7.5, z: -18.45}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 4.5, z: -12.12}
+  m_LocalScale: {x: 2.5, y: 2.5000002, z: 2.5000002}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 978640881}
   m_LocalEulerAnglesHint: {x: 14.240001, y: 0, z: 0}
 --- !u!1 &545587315
 GameObject:
@@ -3160,6 +3160,10 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5697985877615780038, guid: a1133ace6b23eb74aa6296fa0bd0706d,
         type: 3}
       insertIndex: -1
+      addedObject: {fileID: 1582585232}
+    - targetCorrespondingSourceObject: {fileID: 5697985877615780038, guid: a1133ace6b23eb74aa6296fa0bd0706d,
+        type: 3}
+      insertIndex: -1
       addedObject: {fileID: 628610369}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 5697985877615780034, guid: a1133ace6b23eb74aa6296fa0bd0706d,
@@ -3492,7 +3496,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 978640881}
   bot: {fileID: 711444263}
-  isFirstCollision: 1
 --- !u!54 &744338329
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -5774,7 +5777,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -92, y: 173}
+  m_AnchoredPosition: {x: -92, y: 365.5}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1406754137
@@ -6613,12 +6616,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1582585229}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.99228877, z: -0.123947844, w: 0}
-  m_LocalPosition: {x: 0.71, y: 7.5, z: 15.19}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: 0.123947844, y: -0, z: -0, w: 0.99228877}
+  m_LocalPosition: {x: 0, y: 4.5, z: -11.15}
+  m_LocalScale: {x: 2.5000005, y: 2.5, z: 2.5000002}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 711444263}
   m_LocalEulerAnglesHint: {x: 14.24, y: 180, z: 0}
 --- !u!1 &1624026468
 GameObject:
@@ -6874,7 +6877,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 0}
   bot: {fileID: 0}
-  isFirstCollision: 1
 --- !u!96 &1640194202
 TrailRenderer:
   serializedVersion: 3
@@ -8365,6 +8367,10 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5697985877615780038, guid: a1133ace6b23eb74aa6296fa0bd0706d,
         type: 3}
       insertIndex: -1
+      addedObject: {fileID: 534669905}
+    - targetCorrespondingSourceObject: {fileID: 5697985877615780038, guid: a1133ace6b23eb74aa6296fa0bd0706d,
+        type: 3}
+      insertIndex: -1
       addedObject: {fileID: 82786735}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 5697985877615780034, guid: a1133ace6b23eb74aa6296fa0bd0706d,
@@ -8795,8 +8801,6 @@ GameObject:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 534669905}
-  - {fileID: 1582585232}
   - {fileID: 170076735}
   - {fileID: 1573876291}
   - {fileID: 1067949794}

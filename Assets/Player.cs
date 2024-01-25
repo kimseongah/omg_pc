@@ -3,8 +3,8 @@ using System.Collections;
 
 public class Player : MonoBehaviour
 {
-    float hitForce = 9f;
-    float upForce = 9f;
+    float hitForce;
+    float upForce;
     public Transform shuttlecock;
     Animator animator;
     bool isNearBy = false;
@@ -16,6 +16,9 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
+        hitForce = Random.Range(6f, 9f);
+        upForce = Random.Range(6f, 9f);
+
         animator = GetComponent<Animator>();
         objectName = gameObject.name;
         if (racquet == null)
@@ -86,7 +89,9 @@ public class Player : MonoBehaviour
             }
         }
         SensorData sensor = SocketManager.instance.sensor[(objectName == "player") ? 0 : 1];
-        racquet.rotation *= Quaternion.Euler(0, 0, (float)sensor.gyrX);
+        float rotationAngle = (float)sensor.gyrX;
+        rotationAngle = Mathf.Clamp(rotationAngle, -180f, 180f);
+        racquet.rotation *= Quaternion.Euler(0, 0, rotationAngle);
     }
 
     // 셔틀콕의 초기 위치, 초기 속도, 목표 y 위치(라켓의 y 위치)를 받아서 x, z 위치를 반환
