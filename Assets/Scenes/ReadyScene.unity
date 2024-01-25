@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311924, g: 0.38073963, b: 0.3587269, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -167,9 +167,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57277462382d3f044b1d8076db80acfd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  serverConfig: {fileID: 11400000, guid: 0c1085287c600b947a29736cce890309, type: 2}
+  serverConfig: {fileID: 11400000, guid: b26d5e9d8680846499b5199658c9df83, type: 2}
   player1: {fileID: 756874516}
   player2: {fileID: 2121487803}
+  sensor:
+  - name: 
+    accX: 0
+    accY: 0
+    accZ: 0
+    accT: 0
+    gyrX: 0
+    gyrY: 0
+    gyrZ: 0
+    gyrT: 0
+  - name: 
+    accX: 0
+    accY: 0
+    accZ: 0
+    accT: 0
+    gyrX: 0
+    gyrY: 0
+    gyrZ: 0
+    gyrT: 0
 --- !u!1 &555682750
 GameObject:
   m_ObjectHideFlags: 0
@@ -759,7 +778,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca3240702ddee2f4eb6896bf44979c8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  serverConfig: {fileID: 11400000, guid: 0c1085287c600b947a29736cce890309, type: 2}
+  serverConfig: {fileID: 11400000, guid: b26d5e9d8680846499b5199658c9df83, type: 2}
   code: {fileID: 2022373089}
 --- !u!1 &2121487801
 GameObject:
