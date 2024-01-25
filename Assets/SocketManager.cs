@@ -36,6 +36,8 @@ public class SocketManager : MonoBehaviour
     public ServerConfig serverConfig;
     public SocketIOUnity socket;
     public TextMeshProUGUI player1, player2, ready;
+    public Image playerImg1, playerShadow1, empty1;
+    public Image playerImg2, playerShadow2, empty2;
     short playerN = 0;
     JoinData[] player = new JoinData[2];
     public SensorData[] sensor = new SensorData[2];
@@ -73,6 +75,14 @@ public class SocketManager : MonoBehaviour
         socket.OnDisconnected += (sender, e) => { Debug.Log("Disconnected: " + e); };
 
         obj = GameObject.Find("Game Start");
+
+        playerImg1.enabled = false;
+        playerShadow1.enabled = false;
+        empty1.enabled = true;
+
+        playerImg2.enabled = false;
+        playerShadow2.enabled = false;
+        empty2.enabled = true;
     }
 
     public void OnReady(string code)
@@ -87,6 +97,9 @@ public class SocketManager : MonoBehaviour
                     player[0] = new JoinData(data.name);
                     player1.text = data.name;
                     playerN++;
+                    playerImg1.enabled = true;
+                    playerShadow1.enabled = true;
+                    empty1.enabled = false;
                 }
                 else if (playerN == 1)
                 {
@@ -94,11 +107,17 @@ public class SocketManager : MonoBehaviour
                     {
                         player[0] = new JoinData(data.name);
                         player1.text = data.name;
+                        playerImg1.enabled = true;
+                        playerShadow1.enabled = true;
+                        empty1.enabled = false;
                     }
                     else
                     {
                         player[1] = new JoinData(data.name);
                         player2.text = data.name;
+                        playerImg2.enabled = true;
+                        playerShadow2.enabled = true;
+                        empty2.enabled = false;
                     }
                     playerN++;
                     StartCoroutine(StartIf2(code));
@@ -111,12 +130,18 @@ public class SocketManager : MonoBehaviour
                     player[0] = null;
                     player1.text = "Player 1";
                     playerN--;
+                    playerImg1.enabled = false;
+                    playerShadow1.enabled = false;
+                    empty1.enabled = true;
                 }
                 else if (player[1] != null && player[1].name == data.name)
                 {
                     player[1] = null;
                     player2.text = "Player 2";
                     playerN--;
+                    playerImg2.enabled = false;
+                    playerShadow2.enabled = false;
+                    empty2.enabled = true;
                 }
             }
         });
