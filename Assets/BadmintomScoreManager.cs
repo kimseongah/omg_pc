@@ -6,7 +6,7 @@ public class BadmintonScoreManager : MonoBehaviour
 {
     private int playerScore;
     private int opponentScore;
-    public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI scoreText, player1, player2;
 
     public static BadmintonScoreManager Instance { get; private set; }
 
@@ -27,6 +27,9 @@ public class BadmintonScoreManager : MonoBehaviour
     void Start()
     {
         ResetScores();
+
+        player1.text = SocketManager.instance.player[0].name;
+        player2.text = SocketManager.instance.player[1].name;
     }
 
     // 플레이어 점수 증가
@@ -46,7 +49,7 @@ public class BadmintonScoreManager : MonoBehaviour
     // 점수 디스플레이 업데이트
     private void UpdateScoreDisplay()
     {
-        scoreText.text = $"Player1 : {playerScore} - Player2 : {opponentScore}";
+        scoreText.text = $"{playerScore} : {opponentScore}";
         // UI 업데이트 로직 추가
     }
 

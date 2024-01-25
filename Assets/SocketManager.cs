@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using TMPro;
 
 [Serializable]
-class JoinData
+public class JoinData
 {
     public string name;
     public int statusCode;
@@ -39,7 +39,7 @@ public class SocketManager : MonoBehaviour
     public Image playerImg1, playerShadow1, empty1;
     public Image playerImg2, playerShadow2, empty2;
     short playerN = 0;
-    JoinData[] player = new JoinData[2];
+    public JoinData[] player = new JoinData[2];
     public SensorData[] sensor = new SensorData[2];
     GameObject obj;
 
