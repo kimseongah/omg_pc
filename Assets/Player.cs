@@ -3,34 +3,23 @@ using System.Collections;
 
 public class Player : MonoBehaviour
 {
-    public Transform aimTarget;
-    float speed = 3f;
-    float hitForce = 9f;
-    float upForce = 9f;
-    bool isHitting;
+    float hitForce;
+    float upForce;
     public Transform shuttlecock;
     Animator animator;
-    Vector3 aimTargetInitialPosition;
-    public GameObject playerInArea;
-    public float minDistanceToHit = 0f;
-
-    Vector3 origin = new Vector3(1.28f, 0.3825f, 0.67f);
-    const float r = 0.8f;
-    private float lowPassFilterFactor = 0.1f;
-    private Vector3 lowPassValue = Vector3.zero;
-
-    // 예상 위치에 도달할 시간 (초)
-    public float predictionTime = 2f;
-
     bool isNearBy = false;
     string objectName;
     public Transform racquet;
+    private Quaternion lastRotation; // 이전 프레임에서의 회전
+    public float rotationThreshold = 50000; // 회전 속도 임계값
     public float smoothMoveSpeed = 5f;
-    public Collider targetArea;
+
     private void Start()
     {
+        hitForce = Random.Range(6f, 9f);
+        upForce = Random.Range(6f, 9f);
+
         animator = GetComponent<Animator>();
-        aimTargetInitialPosition = aimTarget.position;
         objectName = gameObject.name;
         if (racquet == null)
         {
@@ -45,19 +34,23 @@ public class Player : MonoBehaviour
         {
             transform.position = new Vector3(0.904f, 1.62f, 7.45f);
         }
+        lastRotation = racquet.rotation;
     }
 
     void Update()
     {
         Rigidbody shuttlecockRb = shuttlecock.GetComponent<Rigidbody>();
         Ball shuttlecockScript = shuttlecock.GetComponent<Ball>();
+        float rotationSpeed = Quaternion.Angle(racquet.rotation, lastRotation) / Time.deltaTime;
+
         // 서브일 때 포물선으로 올려주기
         // 나한테 다가올 때
         //y==racquet.y일 때 t구하고 위치 예측해서
-
+        Debug.Log(rotationSpeed+ " > " + rotationThreshold);
+        Debug.Log("isNearBy: "+isNearBy);
         if (objectName == "player")
-        {
-            if (Input.GetKeyDown(KeyCode.Return) && isNearBy) // 엔터를 눌렀을 때
+        {   
+            if (rotationSpeed > rotationThreshold && isNearBy) // 엔터를 눌렀을 때
             {
                 HitShuttlecock();
                 PlayerPrefs.SetInt("whoIsHitting", 1);
@@ -66,7 +59,7 @@ public class Player : MonoBehaviour
         }
         else
         {
-            if (Input.GetKeyDown(KeyCode.Space) && isNearBy) // 스페이스바를 눌렀을 때
+            if (rotationSpeed > rotationThreshold && isNearBy) // 스페이스바를 눌렀을 때
             {
                 HitShuttlecock();
                 PlayerPrefs.SetInt("whoIsHitting", 2);
@@ -74,28 +67,31 @@ public class Player : MonoBehaviour
             }
         }
         int whoIsHitting = PlayerPrefs.GetInt("whoIsHitting", 0);
-
-        if (whoIsHitting == 1 && objectName == "player2")
+        if (shuttlecockRb.useGravity)
         {
-            Vector3 predictedPosition = CalculateLandingPosition(shuttlecockRb.position, shuttlecockRb.velocity, racquet.position.y);
-            predictedPosition.x += 0.8f;
-            predictedPosition.z -= 1;
-            StartCoroutine(MoveToPosition(predictedPosition));
-            PlayerPrefs.SetInt("whoIsHitting", 0);
-            PlayerPrefs.Save();
+            if (whoIsHitting == 1 && objectName == "player2")
+            {
+                Vector3 predictedPosition = CalculateLandingPosition(shuttlecockRb.position, shuttlecockRb.velocity, racquet.position.y);
+                predictedPosition.x += 0.8f;
+                predictedPosition.z += 1;
+                StartCoroutine(MoveToPosition(predictedPosition));
+                PlayerPrefs.SetInt("whoIsHitting", 0);
+                PlayerPrefs.Save();
+            }
+            else if (whoIsHitting == 2 && objectName == "player")
+            {
+                Vector3 predictedPosition = CalculateLandingPosition(shuttlecockRb.position, shuttlecockRb.velocity, racquet.position.y);
+                predictedPosition.x -= 0.8f;
+                predictedPosition.z -= 1;
+                StartCoroutine(MoveToPosition(predictedPosition));
+                PlayerPrefs.SetInt("whoIsHitting", 0);
+                PlayerPrefs.Save();
+            }
         }
-        else if (whoIsHitting == 2 && objectName == "player")
-        {
-            Vector3 predictedPosition = CalculateLandingPosition(shuttlecockRb.position, shuttlecockRb.velocity, racquet.position.y);
-            predictedPosition.x -= 0.8f;
-            predictedPosition.z += 1;
-            StartCoroutine(MoveToPosition(predictedPosition));
-            PlayerPrefs.SetInt("whoIsHitting", 0);
-            PlayerPrefs.Save();
-        }
-
         SensorData sensor = SocketManager.instance.sensor[(objectName == "player") ? 0 : 1];
-        racquet.rotation *= Quaternion.Euler(0, 0, (float)sensor.gyrX);
+        float rotationAngle = (float)sensor.gyrX;
+        rotationAngle = Mathf.Clamp(rotationAngle, -180f, 180f);
+        racquet.rotation *= Quaternion.Euler(0, 0, rotationAngle);
     }
 
     // 셔틀콕의 초기 위치, 초기 속도, 목표 y 위치(라켓의 y 위치)를 받아서 x, z 위치를 반환
@@ -104,8 +100,6 @@ public class Player : MonoBehaviour
         float gravity = Physics.gravity.y;
 
         Vector3 adjustedVelocity = initialVelocity;
-
-        Debug.Log("v: " + adjustedVelocity);
 
         // 조정된 속도를 사용하여 시간 계산
         float time;
@@ -137,7 +131,6 @@ public class Player : MonoBehaviour
     {
         if (!Mathf.Approximately(position.y, 1.62f))
         {
-            Debug.Log(position);
             position.y = 1.62f;
             while (Vector3.Distance(transform.position, position) > 0.01f) // 목표 위치에 가까워질 때까지 루프
             {
@@ -152,13 +145,13 @@ public class Player : MonoBehaviour
         Vector3 directionToPlayer = transform.position - shuttlecock.position;
         float angle = Vector3.Angle(shuttlecockRb.velocity, directionToPlayer);
 
-        // 셔틀콕이 플레이어 방향으로 움직이고 있는지 확인 (예: 90도 이내)
+        // 셔틀콕이 플레이어 방향으로 움직이고 있는지 확인 (90도 이내)
         return angle < 90.0f;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Ball")) // if we collide with the shuttlecock 
+        if (other.CompareTag("Ball")) // Ball 태그를 가진 오브젝트와 떨어졌을 때
         {
             isNearBy = true;
         }
@@ -173,24 +166,13 @@ public class Player : MonoBehaviour
 
     private void HitShuttlecock()
     {
+        shuttlecock.GetComponent<Rigidbody>().useGravity = true;
         // 라켓의 회전을 기반으로 힘의 방향 계산
         Vector3 forwardDirection = transform.forward;
         Vector3 hitDirection = forwardDirection.normalized * hitForce + Vector3.up * upForce;
 
         // 셔틀콕에 힘 적용
         shuttlecock.GetComponent<Rigidbody>().velocity = hitDirection;
-
-        // 애니메이션 재생
-        Vector3 shuttlecockDir = shuttlecock.position - transform.position;
-        if (shuttlecockDir.x >= 0)
-        {
-            animator.Play("forehand");
-        }
-        else
-        {
-            animator.Play("backhand");
-        }
-
     }
 
 }
