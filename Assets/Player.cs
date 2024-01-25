@@ -10,15 +10,12 @@ public class Player : MonoBehaviour
     bool isNearBy = false;
     string objectName;
     public Transform racquet;
-    private Quaternion lastRotation; // 이전 프레임에서의 회전
-    public float rotationThreshold = 50000; // 회전 속도 임계값
+    private Quaternion initialRotation, lastRotation; // 이전 프레임에서의 회전
+    float rotationThreshold = 8000; // 회전 속도 임계값
     public float smoothMoveSpeed = 5f;
 
     private void Start()
     {
-        hitForce = Random.Range(6f, 9f);
-        upForce = Random.Range(6f, 9f);
-
         animator = GetComponent<Animator>();
         objectName = gameObject.name;
         if (racquet == null)
@@ -35,6 +32,7 @@ public class Player : MonoBehaviour
             transform.position = new Vector3(0.904f, 1.62f, 7.45f);
         }
         lastRotation = racquet.rotation;
+        initialRotation = racquet.rotation;
     }
 
     void Update()
@@ -46,10 +44,10 @@ public class Player : MonoBehaviour
         // 서브일 때 포물선으로 올려주기
         // 나한테 다가올 때
         //y==racquet.y일 때 t구하고 위치 예측해서
-        Debug.Log(rotationSpeed+ " > " + rotationThreshold);
-        Debug.Log("isNearBy: "+isNearBy);
+        Debug.Log(rotationSpeed + " > " + rotationThreshold);
+        Debug.Log("isNearBy: " + isNearBy);
         if (objectName == "player")
-        {   
+        {
             if (rotationSpeed > rotationThreshold && isNearBy) // 엔터를 눌렀을 때
             {
                 HitShuttlecock();
@@ -90,7 +88,7 @@ public class Player : MonoBehaviour
         }
         SensorData sensor = SocketManager.instance.sensor[(objectName == "player") ? 0 : 1];
         float rotationAngle = (float)sensor.gyrX;
-        rotationAngle = Mathf.Clamp(rotationAngle, -180f, 180f);
+        //rotationAngle = Mathf.Clamp(rotationAngle, -180f, 180f);
         racquet.rotation *= Quaternion.Euler(0, 0, rotationAngle);
     }
 
@@ -166,6 +164,9 @@ public class Player : MonoBehaviour
 
     private void HitShuttlecock()
     {
+        hitForce = Random.Range(6f, 8f);
+        upForce = Random.Range(6f, 8f);
+
         shuttlecock.GetComponent<Rigidbody>().useGravity = true;
         // 라켓의 회전을 기반으로 힘의 방향 계산
         Vector3 forwardDirection = transform.forward;
@@ -173,6 +174,8 @@ public class Player : MonoBehaviour
 
         // 셔틀콕에 힘 적용
         shuttlecock.GetComponent<Rigidbody>().velocity = hitDirection;
+
+        racquet.rotation = initialRotation;
     }
 
 }

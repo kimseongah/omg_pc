@@ -32,9 +32,8 @@ public class ApiManager : MonoBehaviour
 
         if (www.error == null)
         {
-            const string prefix = "Code: ";
-            code.text = prefix + www.downloadHandler.text;
-            obj.GetComponent<SocketManager>().OnReady(code.text.Split(prefix)[1]);
+            code.text = www.downloadHandler.text;
+            obj.GetComponent<SocketManager>().OnReady(code.text);
         }
         else
         {
