@@ -35,7 +35,7 @@ public class SocketManager : MonoBehaviour
 {
     public ServerConfig serverConfig;
     public SocketIOUnity socket;
-    public TextMeshProUGUI player1, player2;
+    public TextMeshProUGUI player1, player2, ready;
     short playerN = 0;
     JoinData[] player = new JoinData[2];
     public SensorData[] sensor = new SensorData[2];
@@ -124,14 +124,19 @@ public class SocketManager : MonoBehaviour
 
     IEnumerator StartIf2(string code)
     {
-        yield return new WaitForSeconds(5.0f);
+        for (int i = 5; i >= 0; i--)
+        {
+            ready.text = $"START IN {i}s";
+            yield return new WaitForSeconds(1.0f);
+        }
         socket.OnUnityThread("game " + code, (response) =>
         {
             SensorData data = JsonUtility.FromJson<SensorData>(response.ToString().Trim('[', ']'));
             if (player[0].name == data.name)
             {
                 sensor[0] = data;
-            } else if (player[1].name == data.name)
+            }
+            else if (player[1].name == data.name)
             {
                 sensor[1] = data;
             }
@@ -139,7 +144,6 @@ public class SocketManager : MonoBehaviour
         socket.Emit("start", code);
         obj.GetComponent<SceneChange>().GameScene();
     }
-
 
     public void Disconnect()
     {
