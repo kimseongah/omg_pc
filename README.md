@@ -25,9 +25,8 @@
 
 ## 1. 타이틀 화면
 
-![title1](https://github.com/kimseongah/omg_pc/assets/71690205/7a7182c3-fcb8-4d54-9063-e50c6d2211a7)
-
-![title2](https://github.com/kimseongah/omg_pc/assets/71690205/6f4ab1f2-4a5e-4e68-89f5-0067ea15a7fe)
+| ![title1](https://github.com/kimseongah/omg_pc/assets/71690205/7a7182c3-fcb8-4d54-9063-e50c6d2211a7) | ![title2](https://github.com/kimseongah/omg_pc/assets/71690205/6f4ab1f2-4a5e-4e68-89f5-0067ea15a7fe) |
+| --- | --- |
 
 ### 1.1. 주요 기능
 
@@ -38,9 +37,8 @@
 
 ![ready1](https://github.com/kimseongah/omg_pc/assets/71690205/9fd08ee0-85bc-4325-bf18-fe067d834213)
 
-![ready2](https://github.com/kimseongah/omg_pc/assets/71690205/cd752576-5ae6-49db-beb5-59977a2aa1dd)
-
-![ready3](https://github.com/kimseongah/omg_pc/assets/71690205/36497a3c-89ad-4cb3-9c37-336ec97fe5f5)
+| ![ready2](https://github.com/kimseongah/omg_pc/assets/71690205/cd752576-5ae6-49db-beb5-59977a2aa1dd) | ![ready3](https://github.com/kimseongah/omg_pc/assets/71690205/36497a3c-89ad-4cb3-9c37-336ec97fe5f5) |
+| --- | --- |
 
 ### 2.1. 주요 기능
 
